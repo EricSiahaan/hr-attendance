@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model employee {
+  NIK              String  @id
+  NamaLengkap      String  @db.VarChar(255)
+  Alamat           String? @db.VarChar(255)
+  NomorHandphone   String? @db.VarChar(255)
+  Email            String? @db.VarChar(100)
+  TempatLahir      String? @db.VarChar(100)
+  Agama            String? @db.VarChar(100)
+  StatusPerkawinan String? @db.VarChar(100)
+  NoKTP            Int?
+}
+
+model user {
+  id          String @id @default(uuid())
+  name        String
+  departement String
+}
+
+model attendance {
+  id           Int       @id @default(autoincrement())
+  nik          String?
+  namaKaryawan String?
+  checkIn      DateTime? @db.DateTime(0)
+  checkOut     DateTime? @db.DateTime(0)
+
+  @@index([nik], map: "nik")
+}
+
+model Pegawai {
+  id        Int         @id @default(autoincrement())
+  nama      String
+  email     String      @unique
+  password  String
+  peran     String      @default("pegawai")
+  Kehadiran Kehadiran[]
+}
+
+model Kehadiran {
+  id        Int       @id @default(autoincrement())
+  pegawai   Pegawai   @relation(fields: [pegawaiId], references: [id])
+  pegawaiId Int
+  datang    DateTime  @default(now())
+  pulang    DateTime?
+}
+
+model KodeQr {
+  id      Int      @id @default(autoincrement())
+  kode    String   @unique
+  tanggal DateTime @default(now())
+}
